@@ -23,8 +23,8 @@ resume:
 status:
     @echo "--- Checking K3d Nodes ---"
     @kubectl get nodes
-    @echo "\n--- Checking Kafka Namespace Pods ---"
-    @kubectl get pods -n {{KAFKA_NS}}
+    @echo "\n--- Checking Deployed Pods ---"
+    @kubectl get pods -A
 
 # --- Connection Management (NEW) ---
 
@@ -63,8 +63,8 @@ all: app-deploy
 clean: app-delete infra-down
     @echo "\n🔥 Full environment has been destroyed."
 
-## 🏗️ INFRA-UP: Creates just the infrastructure (K3d, Kafka, Schema Registry)
-infra-up: schema-registry
+### 🏗️ INFRA-UP: Creates just the infrastructure (K3d, Kafka, Monitoring, Dashboards)
+infra-up: monitoring-dashboards
     @echo "\n✅ Full infrastructure is UP and ready!"
 
 ## 🔥 INFRA-DOWN: Destroys just the infrastructure
