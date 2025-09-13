@@ -1,0 +1,63 @@
+# helm/kafka-exporter-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-exporter
+  namespace: kafka
+  labels:
+    app: kafka-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-exporter
+  template:
+    metadata:
+      labels:
+        app: kafka-exporter
+    spec:
+      containers:
+      - name: kafka-exporter
+        image: danielqsj/kafka-exporter:v1.9.0
+        args:
+        # We are now hardcoding the correct Kafka address
+        - "--kafka.server=my-cluster-kafka-brokers.kafka.svc.cluster.local:9092"
+        ports:
+        - name: metrics
+          containerPort: 9308
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-exporter
+  namespace: kafka
+  labels:
+    app: kafka-exporter
+  # This annotation tells the Prometheus Operator to scrape this service
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port:   '9308'
+spec:
+  selector:
+    app: kafka-exporter
+  ports:
+  - name: metrics
+    port: 9308
+    targetPort: 9308
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kafka-exporter-monitor
+  namespace: kafka # Must be in the same namespace as the Service
+  labels:
+    # This label tells the Prometheus instance (named 'prometheus') to pay attention to this monitor.
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      # This selector must match the labels on the Service above (app: kafka-exporter)
+      app: kafka-exporter
+  endpoints:
+  - port: metrics
+    interval: 15s

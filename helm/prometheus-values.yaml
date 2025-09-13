@@ -1,0 +1,7 @@
+# helm/prometheus-values.yaml
+prometheus:
+  prometheusSpec:
+    # An empty selector {} means "select all namespaces" for these resources.
+    serviceMonitorSelector: {}
+    podMonitorSelector: {}
+    ruleSelector: {}

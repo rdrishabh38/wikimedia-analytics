@@ -1,0 +1,52 @@
+# helm/kafka-cluster.yaml (Simplified with No Authentication)
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: kafka
+spec:
+  kafka:
+    version: 3.7.0
+    replicas: 1
+    listeners:
+      # This listener is now simple plaintext, with no authentication needed
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+    storage:
+      type: ephemeral
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+  zookeeper:
+    replicas: 1
+    storage:
+      type: ephemeral
+  entityOperator:
+    topicOperator: {}
+    # User operator is no longer needed
+    # userOperator: {}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: wikimedia-raw-events
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 3
+  replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: wikimedia-transformed-events
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 3
+  replicas: 1

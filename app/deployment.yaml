@@ -1,0 +1,27 @@
+# app/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wikimedia-consumer
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wikimedia-consumer
+  template:
+    metadata:
+      labels:
+        app: wikimedia-consumer
+    spec:
+      containers:
+      - name: consumer
+        image: wikimedia-consumer:0.1
+        imagePullPolicy: Never
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+          - name: KAFKA_BROKER
+            value: "my-cluster-kafka-brokers.kafka.svc.cluster.local:9092"
+          - name: KAFKA_TOPIC
+            value: "wikimedia-raw-events"
