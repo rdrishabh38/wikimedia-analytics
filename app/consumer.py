@@ -54,7 +54,7 @@ while True:
                                         event_data = json.loads(line[6:])
                                         wiki_key = event_data.get('database', 'unknown_db')
                                         producer.produce(KAFKA_TOPIC, key=wiki_key.encode('utf-8'), value=json.dumps(event_data).encode('utf-8'))
-                                        print(str(datetime.now()) + f"Sent page-move event from '{wiki_key}'")
+                                        print(str(datetime.now()) + f" - Sent page-move event from '{wiki_key}'")
                                     except Exception as e:
                                         print(f"Error processing event data: {e}")
                             producer.flush(timeout=5)

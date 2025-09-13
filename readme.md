@@ -108,7 +108,9 @@ graph TD
 ├── justfile
 ├── modules/
 │   └── k3d-cluster/
-│       └── ...
+│       └── main.tf
+        └── variables.tf
+        └── versions.tf
 └── root.hcl
 ```
 ---
@@ -323,6 +325,40 @@ Watch the `kafka` namespace. Wait until the `wikimedia-consumer-...` pod is `1/1
 kubectl get pods -n kafka -w
 ```
 Once it's running, you can view the live logs with `just app-logs`.
+
+### **Step 11: Forward the Grafana port**
+This command forwards the Grafana port so that we can access Grafana UI in the browser.
+
+**Command:**
+```bash
+just connect
+```
+**Verification:**
+Watch the username and password as per the command output
+```bash
+✅ Grafana is now available at: http://localhost:8080
+   Username: admin
+   Password: grafana_password
+
+✅ Prometheus is now available at: http://localhost:9090
+
+Run 'just disconnect' to stop port forwarding.
+```
+Once it's running, you can view the Grafana dashboard in the browser.
+
+![Grafana Dashboard](readme_assets/grafana-dashboard.gif)
+
+### **Step 12: Clean up everything**
+To clean up all the resources simply run :
+
+**Command:**
+```bash
+just clean
+```
+
+The command will destroy all the resources created so far.
+
+![Destroy all resources](readme_assets/just_clean.gif)
 
 ## Contributing
 
